@@ -43,5 +43,10 @@
     "nuxt-custom-fetch": "^1.0.8",
     "nuxt-error-and-cache": "^1.0.9",
     "pinia": "^2.1.6"
+  },
+  "pnpm": {
+    "overrides": {
+      "ofetch": "1.2.1"
+    }
   }
 }
