@@ -1,0 +1,43 @@
+{
+  "name": "x-copy",
+  "version": "1.0.0",
+  "description": "cli for vue default config template",
+  "main": "./dist/index.mjs",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "x-copy": "./bin/x-copy.mjs"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "giget": "jiti ./src/index.ts",
+    "x-copy": "node ./bin/x-copy.mjs"
+  },
+  "keywords": [
+    "x-copy"
+  ],
+  "author": "xjccc",
+  "license": "MIT",
+  "dependencies": {
+    "citty": "^0.1.4",
+    "consola": "^3.2.3",
+    "giget": "^1.1.2",
+    "pathe": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.0",
+    "jiti": "^1.20.0",
+    "typescript": "^5.2.2",
+    "unbuild": "^2.0.0"
+  }
+}

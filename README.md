@@ -1,9 +1,10 @@
-# vue 相关项目模版示例
+# x-copy 通过命令行创建模版项目
 
-暂时无法选择，以 cli/ts 为基准
+[模版地址](https://github.com/xjccc-team/template-infos/blob/main/templates.json)
 
-- vue2 - template
+# respect
 
-- vue3 - template
-
-- nuxt3 - template
+1. Vue
+2. vue-cli
+3. Nuxt
+4. UnJS
