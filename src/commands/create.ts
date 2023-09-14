@@ -3,8 +3,8 @@ import { sharedArgs } from './_shared'
 import { DownloadTemplateOptions, downloadTemplate } from 'giget'
 import { consola } from 'consola'
 import { resolve, join } from 'pathe'
-import { readFile } from 'fs/promises'
-import { isExistDir, removeDir } from '../utils'
+import { readFile } from 'node:fs/promises'
+import { isExistDir, removeDir, __dirname } from '../utils'
 
 type SelectOption = {
   label: string
@@ -52,10 +52,11 @@ export default defineCommand({
       type: 'string',
       description: 'vue template name'
     },
-    force :{
+    force: {
       type: 'boolean',
       description: 'update template json latest',
-      alias: 'f'
+      alias: 'f',
+      default: false
     }
     // name: {
     //   type: 'positional',
@@ -70,15 +71,16 @@ export default defineCommand({
 
     const force = args.force || false
 
-    const jsonDir = join(import.meta.url, '../../', 'template-infos')
-console.log(jsonDir);
+    const jsonDir = join(__dirname, '../..', 'template-infos')
 
-    if (force || !(await isExistDir(jsonDir))) {
+    const jsonPath = join(jsonDir, 'templates.json')
+    const hasJsonFile = await isExistDir(jsonPath)
+    console.log(force, hasJsonFile)
+
+    if (force || !hasJsonFile) {
       await getTemplate({ dirName: 'template-infos', force })
     }
 
-    const jsonPath = join(jsonDir, 'templates.json')
-    
     const data = await readFile(jsonPath, {
       encoding: 'utf8'
     })

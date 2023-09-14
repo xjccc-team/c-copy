@@ -1,0 +1,23 @@
+[
+  {
+    "label": "vue2-template",
+    "value": "vue2-template",
+    "hint": "vue2 TS + pinia + router template",
+    "url": "https://github.com/xjccc-team",
+    "tar": "https://github.com/xjccc-team/vue2-template"
+  },
+  {
+    "label": "vue3-template",
+    "value": "vue3-template",
+    "hint": "vue3 TS + pinia + router template",
+    "url": "https://github.com/xjccc-team",
+    "tar": "https://github.com/xjccc-team/vue3-template"
+  },
+  {
+    "label": "nuxt3-template",
+    "value": "nuxt3-template",
+    "hint": "nuxt3 template",
+    "url": "https://github.com/xjccc-team",
+    "tar": "https://github.com/xjccc-team/nuxt3-template"
+  }
+]

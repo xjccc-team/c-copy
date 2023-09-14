@@ -26,7 +26,15 @@
   "keywords": [
     "c-copy"
   ],
-  "author": "xjccc",
+  "homepage": "https://github.com/xjccc/c-copy",
+  "author": "xjccc <https://github.com/xjccc>",
+  "publishConfig": {
+    "registry": "https://npmjs.com/package/c-copy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xjccc/c-copy.git"
+  },
   "license": "MIT",
   "dependencies": {
     "citty": "^0.1.4",
