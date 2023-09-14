@@ -3,8 +3,8 @@ import { sharedArgs } from './_shared'
 import { DownloadTemplateOptions, downloadTemplate } from 'giget'
 import { consola } from 'consola'
 import { resolve, join } from 'pathe'
-import { readFile } from 'node:fs/promises'
-import { isExistDir, removeDir, __dirname } from '../utils'
+import { readFile, writeFile, mkdir } from 'node:fs/promises'
+import { isExist, removeDir, __dirname, COPYJSON, COPYDIR } from '../utils'
 
 type SelectOption = {
   label: string
@@ -16,29 +16,39 @@ interface TemplateOptions extends DownloadTemplateOptions {
   dirName: string
 }
 
+async function confirm (path: string) {
+  const isConfirm = await consola.prompt(
+    `project: ${path} is exist, do you want continue?`,
+    {
+      type: 'confirm'
+    }
+  )
+  if (!isConfirm) {
+    process.exit(1)
+  }
+  await removeDir(path)
+}
+
 const getTemplate = async (options: TemplateOptions) => {
   const { dirName } = options
-  const path = join(process.cwd(), dirName)
+  const cwd = options.cwd || process.cwd() || '.'
+  const path = join(cwd, dirName)
 
-  if (await isExistDir(path)) {
-    await removeDir(path)
+  if (await isExist(path)) {
+    await confirm(path)
   }
   if (!dirName) {
     consola.error('--template to get template')
     process.exit(1)
   }
-  const { source, dir } = await downloadTemplate(
+  return await downloadTemplate(
     `github:xjccc-team/${dirName}`,
     {
       ...options,
+      cwd,
       dir: dirName
     }
   )
-
-  return {
-    source,
-    dir
-  }
 }
 
 export default defineCommand({
@@ -71,17 +81,28 @@ export default defineCommand({
 
     const force = args.force || false
 
-    const jsonDir = join(__dirname, '../..', 'template-infos')
+    const hasJsonFile = await isExist(COPYJSON)
 
-    const jsonPath = join(jsonDir, 'templates.json')
-    const hasJsonFile = await isExistDir(jsonPath)
-    console.log(force, hasJsonFile)
+    console.log(force, hasJsonFile, COPYJSON)
 
     if (force || !hasJsonFile) {
-      await getTemplate({ dirName: 'template-infos', force })
+      const { dir } = await getTemplate({ dirName: 'template-infos', force })
+      
+      const json = await readFile(join(dir, 'templates.json'), {
+        encoding: 'utf8'
+      })
+
+      await removeDir(dir)
+      console.log(COPYDIR, await isExist(COPYDIR))
+      
+      if (!(await isExist(COPYDIR))) {
+        await mkdir(COPYDIR)
+      }
+
+      await writeFile(COPYJSON, json)
     }
 
-    const data = await readFile(jsonPath, {
+    const data = await readFile(COPYJSON, {
       encoding: 'utf8'
     })
 
@@ -94,22 +115,14 @@ export default defineCommand({
         options: projectOptions
       })) as unknown as string
     }
-    if (await isExistDir(join(projectPath, template))) {
-      const confirm = await consola.prompt(
-        'project is exist, do you want continue?',
-        {
-          type: 'confirm'
-        }
-      )
-      if (!confirm) {
-        process.exit(1)
-      }
-      removeDir(join(projectPath, template))
+
+    if (await isExist(join(projectPath, template))) {
+      await confirm(join(projectPath, template))
     }
 
     consola.start('downloading ...')
 
-    await getTemplate({ dirName: template, cwd: join(projectPath, template) })
+    await getTemplate({ dirName: template, cwd: projectPath })
 
     consola.success('create project successful!!')
   }
