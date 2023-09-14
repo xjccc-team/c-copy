@@ -52,21 +52,22 @@ export default defineCommand({
   },
   async run ({ args }) {
     const projectPath = resolve(args.cwd || '.')
-    let template: SelectOption = { label: args.template,value: args.template }
+    let template = args.template
     consola.start('search templates ...')
     const { dir } = await getTemplate('template-infos')
     const data = await readFile(join(dir, 'templates.json'), { encoding: 'utf8' })
     const projectOptions: SelectOption[] = JSON.parse(data)
+    
     removeDir(dir)
     const templateNames = projectOptions.map(item => item.value)
-    if (!template.value || !templateNames.includes(template.value)) {
-      template = await consola.prompt('select a template', {
+    if (!template || !templateNames.includes(template)) {
+      template = (await consola.prompt('select a template', {
         type: 'select',
         options: projectOptions
-      })
+      })) as unknown as string
     }
-
-    if (await isExistDir(join(projectPath, template.value))) {
+    
+    if (await isExistDir(join(projectPath, template))) {
       const confirm = await consola.prompt('project is exist, do you want continue?', {
         type: 'confirm'
       })
@@ -75,7 +76,8 @@ export default defineCommand({
       }
     }
 
-    await getTemplate(template.value, join(projectPath, template.value))
+    console.log(projectPath, template)
+    await getTemplate(template, join(projectPath, template))
 
     consola.success('create project successful!!')
   }
