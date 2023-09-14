@@ -13,7 +13,8 @@ type SelectOption = {
 }
 
 interface TemplateOptions extends DownloadTemplateOptions {
-  dirName: string
+  dirName: string,
+  template?: string
 }
 
 async function confirm (path: string) {
@@ -30,19 +31,19 @@ async function confirm (path: string) {
 }
 
 const getTemplate = async (options: TemplateOptions) => {
-  const { dirName } = options
+  const { dirName, template = dirName } = options
   const cwd = options.cwd || process.cwd() || '.'
   const path = join(cwd, dirName)
 
   if (await isExist(path)) {
     await confirm(path)
   }
-  if (!dirName) {
+  if (!template) {
     consola.error('--template to get template')
     process.exit(1)
   }
   return await downloadTemplate(
-    `github:xjccc-team/${dirName}`,
+    `github:xjccc-team/${template}`,
     {
       ...options,
       cwd,
@@ -67,23 +68,25 @@ export default defineCommand({
       description: 'update template json latest',
       alias: 'f',
       default: false
+    },
+    name: {
+      type: 'positional',
+      required: false,
+      valueHint: 'name'
     }
-    // name: {
-    //   type: 'positional',
-    //   required: true,
-    //   valueHint: 'name'
-    // }
   },
   async run ({ args }) {
     const projectPath = resolve(args.cwd || '.')
     let template = args.template
+
+    const projectName = args.name || template
+
     consola.start('get templates ...')
 
     const force = args.force || false
 
     const hasJsonFile = await isExist(COPYJSON)
 
-    console.log(force, hasJsonFile, COPYJSON)
 
     if (force || !hasJsonFile) {
       const { dir } = await getTemplate({ dirName: 'template-infos', force })
@@ -93,7 +96,6 @@ export default defineCommand({
       })
 
       await removeDir(dir)
-      console.log(COPYDIR, await isExist(COPYDIR))
       
       if (!(await isExist(COPYDIR))) {
         await mkdir(COPYDIR)
@@ -116,13 +118,13 @@ export default defineCommand({
       })) as unknown as string
     }
 
-    if (await isExist(join(projectPath, template))) {
-      await confirm(join(projectPath, template))
+    if (await isExist(join(projectPath, projectName))) {
+      await confirm(join(projectPath, projectName))
     }
 
     consola.start('downloading ...')
 
-    await getTemplate({ dirName: template, cwd: projectPath })
+    await getTemplate({ dirName: projectName, template, cwd: projectPath })
 
     consola.success('create project successful!!')
   }

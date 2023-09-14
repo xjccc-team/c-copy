@@ -6,7 +6,7 @@ import pkg from '../package.json' assert { type: 'json' }
 
 export const main = defineCommand({
   meta: {
-    name: pkg.name,
+    name: 'c-copy',
     version: pkg.version,
     description: pkg.description,
   },

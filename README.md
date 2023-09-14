@@ -14,9 +14,12 @@ pnpm install create-copy -g
 
 ## usage
 
+c-copy create [OPTIONS] [NAME]
+
 ```bash
 # 创建模版
-c-copy create --template vue2-template
+c-copy create xxx
+c-copy create --template vue2-template xxx
 # 创建时使用最新json数据
 c-copy create --template vue2-template -f
 # 下载到对应目录
