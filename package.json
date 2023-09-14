@@ -1,12 +1,12 @@
 {
-  "name": "x-copy",
-  "version": "1.0.0",
+  "name": "create-copy",
+  "version": "0.0.1",
   "description": "cli for vue default config template",
   "main": "./dist/index.mjs",
   "type": "module",
   "types": "./dist/index.d.ts",
   "bin": {
-    "x-copy": "./bin/x-copy.mjs"
+    "c-copy": "./bin/c-copy.mjs"
   },
   "exports": {
     ".": {
@@ -21,10 +21,10 @@
   "scripts": {
     "build": "unbuild",
     "giget": "jiti ./src/index.ts",
-    "x-copy": "node ./bin/x-copy.mjs"
+    "c-copy": "node ./bin/c-copy.mjs"
   },
   "keywords": [
-    "x-copy"
+    "c-copy"
   ],
   "author": "xjccc",
   "license": "MIT",
