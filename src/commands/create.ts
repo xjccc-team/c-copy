@@ -121,7 +121,7 @@ export default defineCommand({
         {} as { [key: string]: SelectOption }
       )
       console.log(iniData)
-      
+
       await removeDir(dir)
 
       await writeFile(COPYJSON, ini.stringify(iniData))
@@ -147,7 +147,7 @@ export default defineCommand({
 
     consola.start('downloading ...')
 
-    await getTemplate({ dirName: projectName, template, cwd: projectPath })
+    await getTemplate({ dirName: projectName || template, template, cwd: projectPath })
 
     consola.success('create project successful!!')
   }
