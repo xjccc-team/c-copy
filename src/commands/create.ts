@@ -26,10 +26,11 @@ async function confirm (path: string) {
       type: 'confirm'
     }
   )
-  if (!isConfirm) {
+  
+  if (!isConfirm || typeof isConfirm !== 'boolean') {
     process.exit(1)
   }
-
+  
   consola.success('continue ...')
 
   return isConfirm
