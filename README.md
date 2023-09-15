@@ -19,6 +19,8 @@ c-copy create [OPTIONS] [NAME]
 ```bash
 # 显示存储json信息 .ccopyrc
 c-copy show
+# 删除存储的json文件 - 删除.ccopyrc
+c-copy clean
 # 创建模版
 c-copy create xxx
 c-copy create --template vue2-template xxx

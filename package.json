@@ -1,6 +1,6 @@
 {
   "name": "create-copy",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "cli for vue default config template",
   "main": "./dist/index.mjs",
   "type": "module",

@@ -29,6 +29,9 @@ async function confirm (path: string) {
   if (!isConfirm) {
     process.exit(1)
   }
+
+  consola.success('continue ...')
+
   return isConfirm
 }
 
@@ -120,7 +123,6 @@ export default defineCommand({
         },
         {} as { [key: string]: SelectOption }
       )
-      console.log(iniData)
 
       await removeDir(dir)
 
@@ -145,10 +147,15 @@ export default defineCommand({
       })) as unknown as string
     }
 
-    consola.start('downloading ...')
-
-    await getTemplate({ dirName: projectName || template, template, cwd: projectPath })
+    consola.start('start downloading ...')
+    const dirName = projectName || template
+    await getTemplate({
+      dirName,
+      template,
+      cwd: projectPath
+    })
 
     consola.success('create project successful!!')
+    consola.box(`cd ${dirName} && pnpm install`)
   }
 })
