@@ -1,12 +1,13 @@
 {
   "name": "create-copy",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "cli for vue default config template",
   "main": "./dist/index.mjs",
   "type": "module",
   "types": "./dist/index.d.ts",
   "bin": {
-    "c-copy": "./bin/c-copy.mjs"
+    "c-copy": "./bin/c-copy.mjs",
+    "create-copy": "./bin/c-copy.mjs"
   },
   "exports": {
     ".": {
@@ -37,9 +38,11 @@
     "citty": "^0.1.4",
     "consola": "^3.2.3",
     "giget": "^1.1.2",
+    "ini": "^4.1.1",
     "pathe": "^1.1.1"
   },
   "devDependencies": {
+    "@types/ini": "^1.3.31",
     "@types/node": "^20.6.0",
     "jiti": "^1.20.0",
     "typescript": "^5.2.2",

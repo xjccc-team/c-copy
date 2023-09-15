@@ -3,7 +3,7 @@
 [模版地址](https://github.com/xjccc-team/template-infos/blob/main/templates.json)
 
 
-> 默认会在 根目录 `/User/xxx/c-copy/c-copy.json` 存储一个json文件
+> 第一次获取json默认数据，会生成一个`__temp__`文件夹（用完即删），根目录 `/User/xxx/.ccopyrc` 存储json数据
 
 ## install
 
@@ -17,6 +17,8 @@ pnpm install create-copy -g
 c-copy create [OPTIONS] [NAME]
 
 ```bash
+# 显示存储json信息 .ccopyrc
+c-copy show
 # 创建模版
 c-copy create xxx
 c-copy create --template vue2-template xxx
