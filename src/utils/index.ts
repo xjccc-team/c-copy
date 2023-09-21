@@ -1,6 +1,11 @@
-import { stat, rm } from 'node:fs/promises'
+import consola from 'consola'
+import { stat, rm, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'pathe'
+import { DownloadTemplateOptions, downloadTemplate } from 'giget'
+import { SelectOption } from '../types'
+import ini from 'ini'
+
 // import { createDefu } from 'defu'
 
 // export const defuExt = createDefu((obj, key, value) => {
@@ -24,6 +29,80 @@ export const removeDir = async (path: string) => {
 export const __filename = fileURLToPath(import.meta.url)
 export const __dirname = dirname(__filename)
 
-export const HOME = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'] || '/'
+export const HOME =
+  process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'] || '/'
 // export const COPYDIR = join(HOME, 'c-copy')
 export const COPYJSON = join(HOME, '.ccopyrc')
+
+export async function confirm (path: string) {
+  const isConfirm = await consola.prompt(
+    `project: ${path} is exist, do you want continue?`,
+    {
+      type: 'confirm'
+    }
+  )
+
+  if (!isConfirm || typeof isConfirm !== 'boolean') {
+    process.exit(1)
+  }
+
+  consola.success('continue ...')
+
+  return isConfirm
+}
+
+interface TemplateOptions extends DownloadTemplateOptions {
+  dirName: string
+  template?: string
+  fileName?: string
+}
+
+export const getTemplate = async (options: TemplateOptions) => {
+  const { dirName, template = dirName, fileName = '' } = options
+  const cwd = options.cwd || process.cwd() || '.'
+  const path = join(cwd, dirName)
+
+  if (await isExist(path)) {
+    options.forceClean = await confirm(path)
+  }
+  if (!template) {
+    consola.error('--template to get template')
+    process.exit(1)
+  }
+
+  const defaultGithub = `github:xjccc-team/${template}`
+
+  const source = fileName ? fileName : defaultGithub
+
+  return await downloadTemplate(source, {
+    ...options,
+    cwd,
+    dir: dirName
+  })
+}
+
+export async function downloadTemplateInfo () {
+  const { dir } = await getTemplate({
+    template: 'template-infos',
+    // fileName: 'files:templates.json',
+    // providers: { files },
+    dirName: '__temp__',
+    force: true
+  })
+
+  const json = await readFile(join(dir, 'templates.json'), {
+    encoding: 'utf8'
+  })
+
+  const data = (JSON.parse(json) as SelectOption[]).reduce((prev, next) => {
+    prev[next.value] = next
+    return prev
+  }, {} as { [key: string]: SelectOption })
+
+  await removeDir(dir)
+  return data
+}
+
+export async function writeDefaultTemplateInfo (data: { [key: string]: SelectOption }) {
+  await writeFile(COPYJSON, ini.stringify(data))
+}

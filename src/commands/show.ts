@@ -12,9 +12,10 @@ export default defineCommand({
   async run () {
     const json = await readFile(COPYJSON, { encoding: 'utf8' })
     if (!json) {
-      consola.error('cant find .ccopyrc')
+      consola.error("can't find .ccopyrc")
       process.exit(1)
     }
-    consola.log(JSON.stringify(ini.parse(json), null, 2))
+
+    consola.info(JSON.stringify(ini.parse(json), null, 2))
   }
 })

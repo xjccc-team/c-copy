@@ -1,6 +1,6 @@
 {
   "name": "create-copy",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "cli for vue default config template",
   "main": "./dist/index.mjs",
   "type": "module",
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/ini": "^1.3.31",
-    "@types/node": "^20.6.0",
+    "@types/node": "^20.6.3",
     "jiti": "^1.20.0",
     "typescript": "^5.2.2",
     "unbuild": "^2.0.0"
