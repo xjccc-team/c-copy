@@ -2,6 +2,9 @@
 
 [模版地址](https://github.com/xjccc-team/template-infos/blob/main/templates.json)
 
+* nuxt3-template
+* vue3-template
+* vue2-template
 
 > 第一次获取json默认数据，会生成一个`__temp__`文件夹（用完即删），根目录 `/User/xxx/.ccopyrc` 存储json数据
 
@@ -16,6 +19,26 @@ pnpm install create-copy -g
 
 c-copy create [OPTIONS] [NAME]
 
+All this commands could use `--help` for more infomations
+
+## commands
+
+#### create
+
+create project with subcommands
+ - template/t
+ - force/f
+ - offline/o
+ - name
+
+#### show
+
+show cached json `.ccopyrc`
+
+#### clean
+
+clean cached json `.ccopyrc` & `.cache/giget`
+
 ```bash
 # 显示存储json信息 .ccopyrc
 c-copy show
@@ -25,9 +48,9 @@ c-copy clean
 c-copy create xxx
 c-copy create --template vue2-template xxx
 # 创建时使用最新json数据
-c-copy create --template vue2-template -f
+c-copy create -t vue2-template -f
 # 下载到对应目录
-c-copy create --template vue2-template --cwd ../../example
+c-copy create -t vue2-template --cwd ../../example
 
 ```
 
