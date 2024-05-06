@@ -19,6 +19,8 @@ pnpm install create-copy -g
 
 c-copy create [OPTIONS] [NAME]
 
+default options with `cwd` & `logLevel`
+
 All this commands could use `--help` for more infomations
 
 ## commands
