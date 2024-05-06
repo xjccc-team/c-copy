@@ -25,12 +25,19 @@ export default defineCommand({
     ...sharedArgs,
     template: {
       type: 'string',
+      alias: 't',
       description: 'vue template name'
     },
     force: {
       type: 'boolean',
       description: 'update template json latest',
       alias: 'f',
+      default: false
+    },
+    offline: {
+      type: 'boolean',
+      description: 'force offline mode',
+      alias: 'o',
       default: false
     },
     name: {
@@ -43,11 +50,10 @@ export default defineCommand({
     const projectPath = resolve(args.cwd || '.')
     let template = args.template
 
-    const projectName = args.name || template
-
     consola.start('get templates ...')
 
-    const force = args.force || false
+    const force = args.force
+    const offline = args.offline
 
     const hasJsonFile = await isExist(COPYJSON)
 
@@ -75,14 +81,17 @@ export default defineCommand({
     }
 
     consola.start('start downloading ...')
-    const dirName = projectName || template
+
+    const dir = args.name || template
     await getTemplate({
-      dirName,
+      force,
+      offline,
+      dir,
       template,
       cwd: projectPath
     })
 
     consola.success('create project successful!!')
-    consola.box(`cd ${dirName} && pnpm install`)
+    consola.box(`cd ${dir} && pnpm install`)
   }
 })

@@ -31,8 +31,11 @@ export const __dirname = dirname(__filename)
 
 export const HOME =
   process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'] || '/'
+  
 // export const COPYDIR = join(HOME, 'c-copy')
 export const COPYJSON = join(HOME, '.ccopyrc')
+
+export const gigetDir = join(HOME, '.cache', 'giget')
 
 export async function confirm (path: string) {
   const isConfirm = await consola.prompt(
@@ -52,21 +55,20 @@ export async function confirm (path: string) {
 }
 
 interface TemplateOptions extends DownloadTemplateOptions {
-  dirName: string
   template?: string
   fileName?: string
 }
 
 export const getTemplate = async (options: TemplateOptions) => {
-  const { dirName, template = dirName, fileName = '' } = options
+  const { dir = '', template = dir, fileName = '' } = options
   const cwd = options.cwd || process.cwd() || '.'
-  const path = join(cwd, dirName)
+  const path = join(cwd, dir)
 
   if (await isExist(path)) {
     options.forceClean = await confirm(path)
   }
   if (!template) {
-    consola.error('--template to get template')
+    consola.error('--template or -t to get template')
     process.exit(1)
   }
 
@@ -77,7 +79,7 @@ export const getTemplate = async (options: TemplateOptions) => {
   return await downloadTemplate(source, {
     ...options,
     cwd,
-    dir: dirName
+    dir
   })
 }
 
@@ -86,7 +88,7 @@ export async function downloadTemplateInfo () {
     template: 'template-infos',
     // fileName: 'files:templates.json',
     // providers: { files },
-    dirName: '__temp__',
+    dir: '__temp__',
     force: true
   })
 
