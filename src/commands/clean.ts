@@ -1,20 +1,21 @@
 import { defineCommand } from 'citty'
 import consola from 'consola'
-import { readFile, unlink } from 'node:fs/promises'
-import { COPYJSON } from '../utils'
+import { unlink, rm } from 'node:fs/promises'
+import { COPYJSON, gigetDir, isExist } from '../utils'
 
 export default defineCommand({
   meta: {
     name: 'clean',
-    description: 'delete .ccopyrc'
+    description: 'delete .ccopyrc & .cache/giget'
   },
   async run () {
-    const json = await readFile(COPYJSON, { encoding: 'utf8' })
-    if (!json) {
-      consola.success('do not need delete .ccopyrc')
-      process.exit(0)
+    if (await isExist(COPYJSON)) {
+      await unlink(COPYJSON)
     }
-    await unlink(COPYJSON)
-    consola.success('success to delete .ccopyrc')
+    
+    if (await isExist(gigetDir)) {
+      await rm(gigetDir, { recursive: true, force: true })
+    }
+    consola.success('success to delete .ccopyrc & .cache/giget')
   }
 })
