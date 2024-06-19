@@ -43,10 +43,10 @@
     "pathe": "^1.1.2"
   },
   "devDependencies": {
-    "@types/ini": "^4.1.0",
-    "@types/node": "^20.13.0",
+    "@types/ini": "^4.1.1",
+    "@types/node": "^20.14.5",
     "changelogen": "^0.5.5",
-    "jiti": "^1.21.0",
+    "jiti": "^1.21.6",
     "typescript": "^5.4.5",
     "unbuild": "^2.0.0"
   }
