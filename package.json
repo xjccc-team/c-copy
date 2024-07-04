@@ -47,7 +47,7 @@
     "@types/node": "^20.14.9",
     "changelogen": "^0.5.5",
     "jiti": "^1.21.6",
-    "typescript": "^5.5.2",
+    "typescript": "^5.5.3",
     "unbuild": "^2.0.0"
   }
 }
