@@ -44,10 +44,10 @@
   },
   "devDependencies": {
     "@types/ini": "^4.1.1",
-    "@types/node": "^20.14.10",
+    "@types/node": "^20.14.11",
     "changelogen": "^0.5.5",
     "jiti": "^1.21.6",
-    "typescript": "^5.5.3",
+    "typescript": "^5.5.4",
     "unbuild": "^2.0.0"
   }
 }
