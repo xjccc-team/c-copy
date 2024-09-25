@@ -32,8 +32,8 @@ devDependencies:
     specifier: ^0.5.5
     version: 0.5.5
   jiti:
-    specifier: ^1.21.6
-    version: 1.21.6
+    specifier: ^2.0.0
+    version: 2.0.0
   typescript:
     specifier: ^5.6.2
     version: 5.6.2
@@ -1679,6 +1679,11 @@ packages:
 
   /jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
+    hasBin: true
+    dev: true
+
+  /jiti@2.0.0:
+    resolution: {integrity: sha512-CJ7e7Abb779OTRv3lomfp7Mns/Sy1+U4pcAx5VbjxCZD5ZM/VJaXPpPjNKjtSvWQy/H86E49REXR34dl1JEz9w==}
     hasBin: true
     dev: true
 
