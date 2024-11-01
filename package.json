@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@types/ini": "^4.1.1",
-    "@types/node": "^22.8.2",
+    "@types/node": "^22.8.6",
     "changelogen": "^0.5.7",
     "jiti": "^2.3.3",
     "typescript": "^5.6.3",
