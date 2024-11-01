@@ -26,8 +26,8 @@ devDependencies:
     specifier: ^4.1.1
     version: 4.1.1
   '@types/node':
-    specifier: ^22.8.2
-    version: 22.8.2
+    specifier: ^22.8.6
+    version: 22.8.6
   changelogen:
     specifier: ^0.5.7
     version: 0.5.7
@@ -823,8 +823,8 @@ packages:
     resolution: {integrity: sha512-MIyNUZipBTbyUNnhvuXJTY7B6qNI78meck9Jbv3wk0OgNwRyOOVEKDutAkOs1snB/tx0FafyR6/SN4Ps0hZPeg==}
     dev: true
 
-  /@types/node@22.8.2:
-    resolution: {integrity: sha512-NzaRNFV+FZkvK/KLCsNdTvID0SThyrs5SHB6tsD/lajr22FGC73N2QeDPM2wHtVde8mgcXuSsHQkH5cX1pbPLw==}
+  /@types/node@22.8.6:
+    resolution: {integrity: sha512-tosuJYKrIqjQIlVCM4PEGxOmyg3FCPa/fViuJChnGeEIhjA46oy8FMVoF9su1/v8PNs2a8Q0iFNyOx0uOF91nw==}
     dependencies:
       undici-types: 6.19.8
     dev: true
