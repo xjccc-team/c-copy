@@ -37,7 +37,7 @@
   "license": "MIT",
   "dependencies": {
     "citty": "^0.1.6",
-    "consola": "^3.2.3",
+    "consola": "^3.3.1",
     "giget": "^1.2.3",
     "ini": "^5.0.0",
     "pathe": "^1.1.2"
