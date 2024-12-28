@@ -37,7 +37,7 @@
   "license": "MIT",
   "dependencies": {
     "citty": "^0.1.6",
-    "consola": "^3.3.1",
+    "consola": "^3.3.3",
     "giget": "^1.2.3",
     "ini": "^5.0.0",
     "pathe": "^1.1.2"
@@ -48,6 +48,6 @@
     "changelogen": "^0.5.7",
     "jiti": "^2.4.2",
     "typescript": "^5.7.2",
-    "unbuild": "^3.0.1"
+    "unbuild": "^3.1.0"
   }
 }
