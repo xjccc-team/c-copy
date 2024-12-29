@@ -48,6 +48,6 @@
     "changelogen": "^0.5.7",
     "jiti": "^2.4.2",
     "typescript": "^5.7.2",
-    "unbuild": "^3.1.0"
+    "unbuild": "^3.2.0"
   }
 }
