@@ -40,7 +40,7 @@
     "consola": "^3.3.3",
     "giget": "^1.2.3",
     "ini": "^5.0.0",
-    "pathe": "^1.1.2"
+    "pathe": "^2.0.0"
   },
   "devDependencies": {
     "@types/ini": "^4.1.1",
