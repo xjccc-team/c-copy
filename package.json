@@ -37,17 +37,17 @@
   "license": "MIT",
   "dependencies": {
     "citty": "^0.1.6",
-    "consola": "^3.3.3",
+    "consola": "^3.4.0",
     "giget": "^1.2.3",
     "ini": "^5.0.0",
-    "pathe": "^2.0.1"
+    "pathe": "^2.0.2"
   },
   "devDependencies": {
     "@types/ini": "^4.1.1",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.10.7",
     "changelogen": "^0.5.7",
     "jiti": "^2.4.2",
     "typescript": "^5.7.3",
-    "unbuild": "^3.2.0"
+    "unbuild": "^3.3.1"
   }
 }
