@@ -38,13 +38,13 @@
   "dependencies": {
     "citty": "^0.1.6",
     "consola": "^3.4.0",
-    "giget": "^1.2.4",
+    "giget": "^1.2.5",
     "ini": "^5.0.0",
     "pathe": "^2.0.3"
   },
   "devDependencies": {
     "@types/ini": "^4.1.1",
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.13.5",
     "changelogen": "^0.5.7",
     "jiti": "^2.4.2",
     "typescript": "^5.7.3",
