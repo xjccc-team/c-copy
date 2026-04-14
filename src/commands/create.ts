@@ -218,6 +218,7 @@ export default defineCommand({
     const dir = args.name || templateInfo?.defaultDir || template
     try {
       await getTemplate({
+        force,
         offline,
         dir,
         template,

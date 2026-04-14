@@ -315,6 +315,38 @@ describe('create command', () => {
     expect(consola.error).toHaveBeenCalledWith('download failed')
   })
 
+  it('passes --force through to registry template downloads', async () => {
+    const home = await createTempHome()
+    const { create, utils } = await loadModules(home)
+
+    silenceConsola()
+    const refreshedTemplates = {
+      demo: {
+        name: 'demo-template',
+        label: 'Demo',
+        value: 'demo',
+        defaultDir: 'starter-app',
+      }
+    }
+
+    vi.spyOn(utils, 'downloadTemplateInfo').mockResolvedValue(refreshedTemplates)
+    const getTemplateSpy = vi.spyOn(utils, 'getTemplate').mockResolvedValue({} as never)
+
+    await create.run!({
+      args: {
+        template: 'demo',
+        force: true,
+        offline: false,
+      }
+    } as never)
+
+    expect(getTemplateSpy).toHaveBeenCalledWith(expect.objectContaining({
+      force: true,
+      dir: 'starter-app',
+      template: 'demo',
+    }))
+  })
+
   it('uses template defaultDir when name is omitted', async () => {
     const home = await createTempHome()
     const { create, utils } = await loadModules(home)

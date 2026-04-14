@@ -84,7 +84,7 @@ c-copy create [options] [name]
 | name | 目标目录名，不传时默认使用模板名 |
 | -u, --url <url> | 直接下载模板 URL，传入后会跳过注册表查找 |
 | -t, --template <name> | 指定模板名；不传时进入交互选择 |
-| -f, --force | 创建前刷新模板注册表 |
+| -f, --force | 创建前刷新模板注册表，并强制刷新模板下载 |
 | -o, --offline | 仅使用本地缓存，不发起网络请求 |
 | --cwd <dir> | 指定项目生成目录；相对路径基于命令发起目录解析 |
 | --logLevel <level> | 指定日志级别，支持 silent、fatal、error、warn、log、info、debug、trace、verbose 或数字级别 |
@@ -105,6 +105,7 @@ c-copy create [options] [name]
 - 使用 --offline 时不能切换到另一个尚未缓存的注册表来源
 - 目标目录已存在时，CLI 会提示是否继续，并在确认后清理该目录
 - 如果当前注册表来源与缓存记录不一致，create 会自动刷新缓存后再创建项目
+- 传入 --force 时，create 会刷新模板注册表，并把强制刷新标记透传给 giget 模板下载
 - create 的默认基准目录是命令发起目录；通过 pnpm c-copy create 调用时会优先使用 INIT_CWD，其次使用 PWD，最后才回退到进程当前目录
 - 未传入 name 时，会依次使用 --url 推导目录名、模板的 defaultDir 和模板 value 作为目标目录名
 
