@@ -12,7 +12,7 @@ export default defineCommand({
       const data = await readTemplateCache()
       consola.info(JSON.stringify(data, null, 2))
     } else {
-      consola.error("can't find .ccopyrc")
+      consola.error('.ccopyrc was not found or is not a file')
       process.exit(1)
     }
   }

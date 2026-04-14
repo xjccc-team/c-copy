@@ -128,6 +128,7 @@ describe('create command', () => {
 
     silenceConsola()
     vi.stubEnv('INIT_CWD', invocationCwd)
+    vi.stubEnv('C_COPY_REGISTRY_PROVIDER', 'invalid-provider')
 
     const getTemplateSpy = vi.spyOn(utils, 'getTemplate').mockResolvedValue({} as never)
     const downloadTemplateInfoSpy = vi.spyOn(utils, 'downloadTemplateInfo')

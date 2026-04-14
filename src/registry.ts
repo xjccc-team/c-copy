@@ -71,6 +71,25 @@ export const hasTemplateRegistryOverride = (
   )
 }
 
+const normalizeRegistryUrl = (input: string) => {
+  let parsedUrl: URL
+
+  try {
+    parsedUrl = new URL(input)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`invalid registry url: ${input}. ${message}`)
+  }
+
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    throw new Error(
+      `invalid registry url protocol: ${parsedUrl.protocol}. Only http: and https: are supported`,
+    )
+  }
+
+  return parsedUrl.toString()
+}
+
 export const buildTemplateRegistryUrl = (config: TemplateRegistryConfig) => {
   if (config.provider === 'url') {
     const input = config.url?.trim()
@@ -79,7 +98,7 @@ export const buildTemplateRegistryUrl = (config: TemplateRegistryConfig) => {
       throw new Error('registry url is required when provider is url')
     }
 
-    return new URL(input).toString()
+    return normalizeRegistryUrl(input)
   }
 
   const repo = trimPath(config.repo || '')

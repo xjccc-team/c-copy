@@ -239,6 +239,45 @@ describe('utils', () => {
     )
   })
 
+  it('normalizes cached registry providers and falls back for invalid values', async () => {
+    const home = await createTempHome()
+    const utils = await loadUtils(home)
+
+    await writeFile(utils.COPYJSON, [
+      '[demo-template]',
+      'name=demo-template',
+      'label=Demo',
+      'value=demo-template',
+      '',
+      '[__ccopy__]',
+      'registryUrl=https://example.com/templates.json',
+      'provider=gl',
+      'repo=team/template-infos',
+      'branch=main',
+      'file=templates.json',
+      '',
+    ].join('\n'))
+
+    expect((await utils.readTemplateCache()).meta?.provider).toBe('gitlab')
+
+    await writeFile(utils.COPYJSON, [
+      '[demo-template]',
+      'name=demo-template',
+      'label=Demo',
+      'value=demo-template',
+      '',
+      '[__ccopy__]',
+      'registryUrl=https://example.com/templates.json',
+      'provider=unexpected-provider',
+      'repo=team/template-infos',
+      'branch=main',
+      'file=templates.json',
+      '',
+    ].join('\n'))
+
+    expect((await utils.readTemplateCache()).meta?.provider).toBe('github')
+  })
+
   it('downloads template info from the resolved registry URL', async () => {
     const home = await createTempHome()
     const utils = await loadUtils(home)

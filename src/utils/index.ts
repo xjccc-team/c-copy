@@ -4,7 +4,7 @@ import { join } from 'pathe'
 import type { DownloadTemplateOptions } from 'giget'
 import { downloadTemplate } from 'giget'
 import ini from 'ini'
-import { resolveTemplateRegistryConfig } from '../registry'
+import { normalizeTemplateRegistryProvider, resolveTemplateRegistryConfig } from '../registry'
 import {
   ResolvedTemplateRegistryConfig,
   TemplateCacheData,
@@ -140,6 +140,20 @@ export const normalizeTemplateInfo = (input: Record<string, unknown>): TemplateR
   }, {} as TemplateRegistry)
 }
 
+const normalizeTemplateCacheProvider = (value: unknown): TemplateCacheMeta['provider'] => {
+  const provider = readMeaningfulString(value)
+
+  if (!provider) {
+    return 'github'
+  }
+
+  try {
+    return normalizeTemplateRegistryProvider(provider)
+  } catch {
+    return 'github'
+  }
+}
+
 const normalizeTemplateCacheMeta = (input: unknown): TemplateCacheMeta | undefined => {
   if (!input || typeof input !== 'object') {
     return undefined
@@ -154,9 +168,7 @@ const normalizeTemplateCacheMeta = (input: unknown): TemplateCacheMeta | undefin
 
   return {
     registryUrl,
-    provider: readMeaningfulString(value.provider)
-      ? readMeaningfulString(value.provider) as TemplateCacheMeta['provider']
-      : 'github',
+    provider: normalizeTemplateCacheProvider(value.provider),
     repo: readMeaningfulString(value.repo),
     branch: readMeaningfulString(value.branch) || '',
     file: readMeaningfulString(value.file) || '',

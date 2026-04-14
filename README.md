@@ -16,8 +16,8 @@ c-copy 是一个基于 citty 和 giget 的命令行工具，用来从远程模�
 
 ## 环境要求
 
-- 运行 CLI：Node.js >= 22.9
-- 开发和运行测试：Node.js >= 22.12
+- 安装和运行 CLI：Node.js >= 22.9（与 package.json 中的 engines.node 保持一致）
+- 开发和运行测试：Node.js >= 22.12（当前开发工具链需要更高的补丁版本；如果只是使用 CLI，无需满足这一项）
 - 建议使用 pnpm 或 npm 安装
 
 ## 安装

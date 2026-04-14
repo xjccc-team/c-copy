@@ -54,6 +54,24 @@ describe('registry helpers', () => {
     })
   })
 
+  it('rejects malformed direct registry URLs with a clearer error', () => {
+    expect(() => buildTemplateRegistryUrl({
+      provider: 'url',
+      url: 'not-a-valid-url',
+      branch: '',
+      file: '',
+    })).toThrow('invalid registry url: not-a-valid-url')
+  })
+
+  it('rejects unsupported direct registry URL protocols', () => {
+    expect(() => buildTemplateRegistryUrl({
+      provider: 'url',
+      url: 'file:///tmp/templates.json',
+      branch: '',
+      file: '',
+    })).toThrow('invalid registry url protocol: file:. Only http: and https: are supported')
+  })
+
   it('detects registry overrides from environment variables', () => {
     expect(hasTemplateRegistryOverride({}, {
       C_COPY_REGISTRY_PROVIDER: 'gitlab',

@@ -90,15 +90,6 @@ export default defineCommand({
     const projectPath = resolve(invocationCwd, args.cwd || '.')
     let template = args.template
     const directUrl = args.url?.trim()
-    const registryInput: TemplateRegistryArgs = {
-      registryUrl: args.registryUrl,
-      registryProvider: args.registryProvider,
-      registryRepo: args.registryRepo,
-      registryBranch: args.registryBranch,
-      registryFile: args.registryFile,
-    }
-    const registryConfig = resolveTemplateRegistryConfig(registryInput)
-    const hasRegistryOverride = hasTemplateRegistryOverride(registryInput)
 
     const force = args.force
     const offline = args.offline
@@ -150,6 +141,16 @@ export default defineCommand({
         process.exit(1)
       }
     }
+
+    const registryInput: TemplateRegistryArgs = {
+      registryUrl: args.registryUrl,
+      registryProvider: args.registryProvider,
+      registryRepo: args.registryRepo,
+      registryBranch: args.registryBranch,
+      registryFile: args.registryFile,
+    }
+    const registryConfig = resolveTemplateRegistryConfig(registryInput)
+    const hasRegistryOverride = hasTemplateRegistryOverride(registryInput)
 
     consola.start('get templates ...')
 
