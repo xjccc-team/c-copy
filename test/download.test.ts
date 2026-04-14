@@ -196,4 +196,25 @@ describe('download command', () => {
     expect(getTemplateSpy).not.toHaveBeenCalled()
     expect(consola.error).toHaveBeenCalledWith('invalid download url: git@github.com:acme/demo-template.git')
   })
+
+  it('reports non-Error download failures with a clean CLI message', async () => {
+    const home = await createTempHome()
+    const { download, utils } = await loadModules(home)
+
+    silenceConsola()
+    const getTemplateSpy = vi.spyOn(utils, 'getTemplate').mockRejectedValue('download failed')
+    const exitSpy = mockProcessExit()
+
+    await expect(download.run!({
+      args: {
+        url: 'https://github.com/acme/demo-template.git',
+        force: false,
+        offline: false,
+      }
+    } as never)).rejects.toThrow('process.exit')
+
+    expect(getTemplateSpy).toHaveBeenCalledOnce()
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(consola.error).toHaveBeenCalledWith('download failed')
+  })
 })

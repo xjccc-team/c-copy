@@ -1,7 +1,7 @@
 import { defineCommand } from 'citty'
 import { downloadTemplateInfo, writeDefaultTemplateInfo } from '../utils'
 import consola from 'consola'
-import { registryArgs } from './_shared'
+import { getErrorMessage, registryArgs } from './_shared'
 import { createTemplateCacheMeta, resolveTemplateRegistryConfig } from '../registry'
 import { TemplateRegistryArgs } from '../types'
 
@@ -30,7 +30,7 @@ export default defineCommand({
       await writeDefaultTemplateInfo(data, createTemplateCacheMeta(registryConfig))
       consola.success('update success!!')
     } catch (error) {
-      consola.error((error as Error).message)
+      consola.error(getErrorMessage(error))
       process.exit(1)
     }
   }

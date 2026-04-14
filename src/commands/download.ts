@@ -1,7 +1,7 @@
 import { defineCommand } from 'citty'
 import { consola } from 'consola'
 import { resolve } from 'pathe'
-import { resolveLogLevel, sharedArgs } from './_shared'
+import { getErrorMessage, resolveLogLevel, sharedArgs } from './_shared'
 import { createTemplateInfoFromUrl, getTemplate, resolveTemplateDirFromUrl } from '../utils'
 
 export default defineCommand({
@@ -43,7 +43,7 @@ export default defineCommand({
         consola.level = logLevel
       }
     } catch (error) {
-      consola.error((error as Error).message)
+      consola.error(getErrorMessage(error))
       process.exit(1)
     }
 
@@ -79,7 +79,7 @@ export default defineCommand({
       consola.success('download template successful!!')
       consola.box(`cd ${dir} && pnpm install`)
     } catch (error) {
-      consola.error((error as Error).message)
+      consola.error(getErrorMessage(error))
       process.exit(1)
     }
   }

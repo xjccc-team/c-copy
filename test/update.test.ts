@@ -84,4 +84,22 @@ describe('update command', () => {
     expect(exitSpy).toHaveBeenCalledWith(1)
     expect(consola.error).toHaveBeenCalledWith('registry fetch failed')
   })
+
+  it('reports non-Error registry failures with a clean CLI message', async () => {
+    const home = await createTempHome()
+    const { update, utils } = await loadModules(home)
+
+    silenceConsola()
+
+    const downloadTemplateInfoSpy = vi.spyOn(utils, 'downloadTemplateInfo').mockRejectedValue('registry fetch failed')
+    const exitSpy = mockProcessExit()
+
+    await expect(update.run!({
+      args: {}
+    } as never)).rejects.toThrow('process.exit')
+
+    expect(downloadTemplateInfoSpy).toHaveBeenCalledOnce()
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(consola.error).toHaveBeenCalledWith('registry fetch failed')
+  })
 })
