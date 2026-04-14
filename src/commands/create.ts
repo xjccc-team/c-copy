@@ -149,8 +149,16 @@ export default defineCommand({
       registryBranch: args.registryBranch,
       registryFile: args.registryFile,
     }
-    const registryConfig = resolveTemplateRegistryConfig(registryInput)
-    const hasRegistryOverride = hasTemplateRegistryOverride(registryInput)
+    let registryConfig: ReturnType<typeof resolveTemplateRegistryConfig>
+    let hasRegistryOverride: boolean
+
+    try {
+      registryConfig = resolveTemplateRegistryConfig(registryInput)
+      hasRegistryOverride = hasTemplateRegistryOverride(registryInput)
+    } catch (error) {
+      consola.error((error as Error).message)
+      process.exit(1)
+    }
 
     consola.start('get templates ...')
 
@@ -174,14 +182,19 @@ export default defineCommand({
     }
 
     if (!offline && (force || !cache || registryChanged || !cache.meta)) {
-      const data = await downloadTemplateInfo(registryConfig)
-      const meta = createTemplateCacheMeta(registryConfig)
+      try {
+        const data = await downloadTemplateInfo(registryConfig)
+        const meta = createTemplateCacheMeta(registryConfig)
 
-      await writeDefaultTemplateInfo(data, meta)
+        await writeDefaultTemplateInfo(data, meta)
 
-      cache = {
-        meta,
-        templates: data,
+        cache = {
+          meta,
+          templates: data,
+        }
+      } catch (error) {
+        consola.error((error as Error).message)
+        process.exit(1)
       }
     }
 
@@ -203,13 +216,18 @@ export default defineCommand({
     consola.start('start downloading ...')
 
     const dir = args.name || templateInfo?.defaultDir || template
-    await getTemplate({
-      offline,
-      dir,
-      template,
-      templateInfo,
-      cwd: projectPath
-    })
+    try {
+      await getTemplate({
+        offline,
+        dir,
+        template,
+        templateInfo,
+        cwd: projectPath
+      })
+    } catch (error) {
+      consola.error((error as Error).message)
+      process.exit(1)
+    }
 
     consola.success('create project successful!!')
     consola.box(`cd ${dir} && pnpm install`)

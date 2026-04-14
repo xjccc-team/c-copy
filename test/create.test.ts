@@ -153,6 +153,28 @@ describe('create command', () => {
     }))
   })
 
+  it('reports registry resolution errors with a clean CLI message', async () => {
+    const home = await createTempHome()
+    const { create, utils } = await loadModules(home)
+
+    silenceConsola()
+    vi.stubEnv('C_COPY_REGISTRY_PROVIDER', 'invalid-provider')
+
+    const downloadTemplateInfoSpy = vi.spyOn(utils, 'downloadTemplateInfo')
+    const exitSpy = mockProcessExit()
+
+    await expect(create.run!({
+      args: {
+        force: false,
+        offline: false,
+      }
+    } as never)).rejects.toThrow('process.exit')
+
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(downloadTemplateInfoSpy).not.toHaveBeenCalled()
+    expect(consola.error).toHaveBeenCalledWith('Unsupported template registry provider: invalid-provider')
+  })
+
   it('rejects mixing --url with template or registry arguments', async () => {
     const home = await createTempHome()
     const { create, utils } = await loadModules(home)
@@ -254,6 +276,43 @@ describe('create command', () => {
     const cache = await utils.readTemplateCache()
     expect(cache.meta?.registryUrl).toBe(registryConfig.resolvedUrl)
     expect(cache.templates).toEqual(refreshedTemplates)
+  })
+
+  it('reports template download failures with a clean CLI message', async () => {
+    const home = await createTempHome()
+    const { create, utils } = await loadModules(home)
+
+    silenceConsola()
+    await utils.writeDefaultTemplateInfo({
+      demo: {
+        name: 'demo-template',
+        label: 'Demo',
+        value: 'demo',
+        defaultDir: 'starter-app',
+      }
+    }, {
+      registryUrl: 'https://raw.githubusercontent.com/xjccc-team/template-infos/main/templates.json',
+      provider: 'github',
+      repo: 'xjccc-team/template-infos',
+      branch: 'main',
+      file: 'templates.json',
+      updatedAt: '2026-04-14T00:00:00.000Z',
+    })
+
+    const getTemplateSpy = vi.spyOn(utils, 'getTemplate').mockRejectedValue(new Error('download failed'))
+    const exitSpy = mockProcessExit()
+
+    await expect(create.run!({
+      args: {
+        template: 'demo',
+        force: false,
+        offline: false,
+      }
+    } as never)).rejects.toThrow('process.exit')
+
+    expect(getTemplateSpy).toHaveBeenCalledOnce()
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(consola.error).toHaveBeenCalledWith('download failed')
   })
 
   it('uses template defaultDir when name is omitted', async () => {

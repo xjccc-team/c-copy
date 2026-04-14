@@ -21,11 +21,17 @@ export default defineCommand({
       registryBranch: args.registryBranch,
       registryFile: args.registryFile,
     }
-    const registryConfig = resolveTemplateRegistryConfig(registryInput)
 
-    consola.start('updating ...')
-    const data = await downloadTemplateInfo(registryConfig)
-    await writeDefaultTemplateInfo(data, createTemplateCacheMeta(registryConfig))
-    consola.success('update success!!')
+    try {
+      const registryConfig = resolveTemplateRegistryConfig(registryInput)
+
+      consola.start('updating ...')
+      const data = await downloadTemplateInfo(registryConfig)
+      await writeDefaultTemplateInfo(data, createTemplateCacheMeta(registryConfig))
+      consola.success('update success!!')
+    } catch (error) {
+      consola.error((error as Error).message)
+      process.exit(1)
+    }
   }
 })
