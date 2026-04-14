@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { LogLevels, consola } from 'consola'
@@ -215,6 +215,33 @@ describe('create command', () => {
     expect(consola.error).toHaveBeenCalledWith('registry options cannot be used together with --url')
   })
 
+  it('ignores whitespace-only registry arguments when used with --url', async () => {
+    const home = await createTempHome()
+    const { create, utils } = await loadModules(home)
+
+    silenceConsola()
+    const getTemplateSpy = vi.spyOn(utils, 'getTemplate').mockResolvedValue({} as never)
+
+    await create.run!({
+      args: {
+        url: 'https://github.com/acme/demo-template.git',
+        registryProvider: '   ',
+        registryRepo: '   ',
+        force: false,
+        offline: false,
+      }
+    } as never)
+
+    expect(getTemplateSpy).toHaveBeenCalledWith(expect.objectContaining({
+      dir: 'demo-template',
+      template: 'demo-template',
+      templateInfo: expect.objectContaining({
+        url: 'https://github.com/acme/demo-template.git',
+      }),
+    }))
+    expect(consola.error).not.toHaveBeenCalled()
+  })
+
   it('refreshes cache and uses new template info when registry changes', async () => {
     const home = await createTempHome()
     const { create, registry, utils } = await loadModules(home)
@@ -313,6 +340,30 @@ describe('create command', () => {
     expect(getTemplateSpy).toHaveBeenCalledOnce()
     expect(exitSpy).toHaveBeenCalledWith(1)
     expect(consola.error).toHaveBeenCalledWith('download failed')
+  })
+
+  it('reports cache read failures with a clean CLI message', async () => {
+    const home = await createTempHome()
+    const { create, utils } = await loadModules(home)
+
+    silenceConsola()
+    await writeFile(utils.COPYJSON, '')
+
+    const readTemplateCacheSpy = vi.spyOn(utils, 'readTemplateCache').mockRejectedValue(new Error('cache read failed'))
+    const downloadTemplateInfoSpy = vi.spyOn(utils, 'downloadTemplateInfo')
+    const exitSpy = mockProcessExit()
+
+    await expect(create.run!({
+      args: {
+        force: false,
+        offline: false,
+      }
+    } as never)).rejects.toThrow('process.exit')
+
+    expect(readTemplateCacheSpy).toHaveBeenCalledOnce()
+    expect(downloadTemplateInfoSpy).not.toHaveBeenCalled()
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(consola.error).toHaveBeenCalledWith('cache read failed')
   })
 
   it('passes --force through to registry template downloads', async () => {

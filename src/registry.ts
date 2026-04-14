@@ -35,6 +35,15 @@ const PROVIDER_ALIASES: Record<string, TemplateRegistryProvider> = {
 const trimPath = (value: string) => value.replace(/^\/+|\/+$/g, '')
 const trimFile = (value: string) => value.replace(/^\/+/, '')
 const hasMeaningfulString = (value?: string) => Boolean(value?.trim())
+const getMeaningfulString = (...values: Array<string | undefined>) => {
+  for (const value of values) {
+    const normalized = value?.trim()
+
+    if (normalized) {
+      return normalized
+    }
+  }
+}
 
 export const normalizeTemplateRegistryProvider = (
   input?: string,
@@ -133,7 +142,10 @@ export const resolveTemplateRegistryConfig = (
   args: TemplateRegistryArgs = {},
   env: NodeJS.ProcessEnv = process.env,
 ): ResolvedTemplateRegistryConfig => {
-  const directUrl = args.registryUrl?.trim() || env[REGISTRY_ENV_KEYS.url]?.trim()
+  const directUrl = getMeaningfulString(
+    args.registryUrl,
+    env[REGISTRY_ENV_KEYS.url],
+  )
 
   if (directUrl) {
     return {
@@ -152,28 +164,35 @@ export const resolveTemplateRegistryConfig = (
   }
 
   const provider = normalizeTemplateRegistryProvider(
-    args.registryProvider
-      || env[REGISTRY_ENV_KEYS.provider]
-      || DEFAULT_TEMPLATE_REGISTRY_CONFIG.provider,
+    getMeaningfulString(
+      args.registryProvider,
+      env[REGISTRY_ENV_KEYS.provider],
+      DEFAULT_TEMPLATE_REGISTRY_CONFIG.provider,
+    ),
   )
 
   const repo = trimPath(
-    args.registryRepo
-      || env[REGISTRY_ENV_KEYS.repo]
-      || DEFAULT_TEMPLATE_REGISTRY_CONFIG.repo
-      || '',
+    getMeaningfulString(
+      args.registryRepo,
+      env[REGISTRY_ENV_KEYS.repo],
+      DEFAULT_TEMPLATE_REGISTRY_CONFIG.repo,
+    ) || '',
   )
 
   const branch = trimPath(
-    args.registryBranch
-      || env[REGISTRY_ENV_KEYS.branch]
-      || DEFAULT_TEMPLATE_REGISTRY_CONFIG.branch,
+    getMeaningfulString(
+      args.registryBranch,
+      env[REGISTRY_ENV_KEYS.branch],
+      DEFAULT_TEMPLATE_REGISTRY_CONFIG.branch,
+    ) || '',
   )
 
   const file = trimFile(
-    args.registryFile
-      || env[REGISTRY_ENV_KEYS.file]
-      || DEFAULT_TEMPLATE_REGISTRY_CONFIG.file,
+    getMeaningfulString(
+      args.registryFile,
+      env[REGISTRY_ENV_KEYS.file],
+      DEFAULT_TEMPLATE_REGISTRY_CONFIG.file,
+    ) || '',
   )
 
   const resolvedUrl = buildTemplateRegistryUrl({

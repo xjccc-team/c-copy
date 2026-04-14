@@ -85,4 +85,24 @@ describe('registry helpers', () => {
       C_COPY_REGISTRY_REPO: '   ',
     })).toBe(false)
   })
+
+  it('ignores whitespace-only resolver inputs before applying fallbacks', () => {
+    expect(resolveTemplateRegistryConfig({
+      registryProvider: '   ',
+      registryRepo: '   ',
+      registryBranch: '   ',
+      registryFile: '   ',
+    }, {
+      C_COPY_REGISTRY_PROVIDER: ' gitlab ',
+      C_COPY_REGISTRY_REPO: ' /team/template-infos/ ',
+      C_COPY_REGISTRY_BRANCH: ' /release/ ',
+      C_COPY_REGISTRY_FILE: ' /custom/templates.json ',
+    })).toEqual({
+      provider: 'gitlab',
+      repo: 'team/template-infos',
+      branch: 'release',
+      file: 'custom/templates.json',
+      resolvedUrl: 'https://gitlab.com/team/template-infos/-/raw/release/custom/templates.json',
+    })
+  })
 })

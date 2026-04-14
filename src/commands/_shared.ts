@@ -51,6 +51,14 @@ export const resolveLogLevel = (value?: string): LogLevel | undefined => {
   )
 }
 
+export const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return String(error)
+}
+
 export const registryArgs = {
   registryUrl: {
     type: 'string',

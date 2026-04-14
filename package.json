@@ -10,10 +10,7 @@
     "create-copy": "./bin/c-copy.mjs"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
+    "default": "./dist/index.mjs"
   },
   "files": [
     "dist",

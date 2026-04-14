@@ -39,6 +39,8 @@ c-copy --help
 create-copy --help
 ```
 
+如果你要在 Node.js 中以代码方式调用这个包，请注意当前版本只提供 ESM 导出，不再提供 CommonJS 的 `require(...)` 入口。
+
 ## 快速开始
 
 ```bash
@@ -274,6 +276,24 @@ c-copy create -t vue3-template my-app
 5. 离线模式下只会使用与当前注册表配置匹配的缓存
 
 如果你曾在旧缓存里遇到过类似 https://raw.githubusercontent.com/unjs/giget/main/templates/undefined.json 的请求错误，执行 c-copy update 即可重写 ~/.ccopyrc。当前版本会在读取缓存时自动忽略历史上遗留的 undefined 和 null 字符串值。
+
+## 程序化调用
+
+除了 CLI 之外，也可以在 ESM 环境里直接调用包导出的运行入口：
+
+```ts
+import { runCommand, runMain } from 'create-copy'
+
+await runCommand('create', ['create', '--template', 'vue3-template', 'demo'])
+
+runMain()
+```
+
+说明：
+
+- 仅支持 ESM `import`
+- 不支持 CommonJS `require('create-copy')`
+- 构建产物默认输出 `dist/index.mjs` 和类型声明文件，不再生成 `dist/index.cjs`
 
 ## 开发
 

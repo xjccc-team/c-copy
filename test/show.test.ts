@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import consola from 'consola'
@@ -60,5 +60,21 @@ describe('show command', () => {
 
     expect(exitSpy).toHaveBeenCalledWith(1)
     expect(consola.error).toHaveBeenCalledWith('.ccopyrc was not found or is not a file')
+  })
+
+  it('reports cache read failures with a clean CLI message', async () => {
+    const home = await createTempHome()
+    const { show, utils } = await loadModules(home)
+
+    silenceConsola()
+    const exitSpy = mockProcessExit()
+
+    await writeFile(utils.COPYJSON, '')
+    vi.spyOn(utils, 'readTemplateCache').mockRejectedValue(new Error('cache read failed'))
+
+    await expect(show.run!({} as never)).rejects.toThrow('process.exit')
+
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(consola.error).toHaveBeenCalledWith('cache read failed')
   })
 })

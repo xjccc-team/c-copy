@@ -1,5 +1,5 @@
 import { defineCommand } from 'citty'
-import { registryArgs, resolveLogLevel, sharedArgs } from './_shared'
+import { getErrorMessage, registryArgs, resolveLogLevel, sharedArgs } from './_shared'
 import { consola } from 'consola'
 import { resolve } from 'pathe'
 import { createTemplateCacheMeta, hasTemplateRegistryOverride, resolveTemplateRegistryConfig } from '../registry'
@@ -13,7 +13,7 @@ import {
   resolveTemplateDirFromUrl,
   writeDefaultTemplateInfo,
 } from '../utils'
-import { TemplateRegistryArgs, TemplateOption } from '../types'
+import { TemplateCacheData, TemplateRegistryArgs, TemplateOption } from '../types'
 
 // const files: TemplateProvider = async (input, { auth }) => {
 //   return {
@@ -82,7 +82,7 @@ export default defineCommand({
         consola.level = logLevel
       }
     } catch (error) {
-      consola.error((error as Error).message)
+      consola.error(getErrorMessage(error))
       process.exit(1)
     }
 
@@ -99,13 +99,13 @@ export default defineCommand({
       process.exit(1)
     }
 
-    const hasExplicitRegistryArgs = Boolean(
-      args.registryUrl
-      || args.registryProvider
-      || args.registryRepo
-      || args.registryBranch
-      || args.registryFile,
-    )
+    const hasExplicitRegistryArgs = [
+      args.registryUrl,
+      args.registryProvider,
+      args.registryRepo,
+      args.registryBranch,
+      args.registryFile,
+    ].some(value => Boolean(value?.trim()))
 
     if (directUrl) {
       if (template) {
@@ -137,7 +137,7 @@ export default defineCommand({
         consola.box(`cd ${dir} && pnpm install`)
         return
       } catch (error) {
-        consola.error((error as Error).message)
+        consola.error(getErrorMessage(error))
         process.exit(1)
       }
     }
@@ -156,16 +156,23 @@ export default defineCommand({
       registryConfig = resolveTemplateRegistryConfig(registryInput)
       hasRegistryOverride = hasTemplateRegistryOverride(registryInput)
     } catch (error) {
-      consola.error((error as Error).message)
+      consola.error(getErrorMessage(error))
       process.exit(1)
     }
 
     consola.start('get templates ...')
 
     const hasJsonFile = await isFile(COPYJSON)
-    let cache = hasJsonFile
-      ? await readTemplateCache()
-      : undefined
+    let cache: TemplateCacheData | undefined
+
+    if (hasJsonFile) {
+      try {
+        cache = await readTemplateCache()
+      } catch (error) {
+        consola.error(getErrorMessage(error))
+        process.exit(1)
+      }
+    }
 
     if (offline && !cache) {
       consola.error('offline mode requires cached template info, run `c-copy update` first')
@@ -193,7 +200,7 @@ export default defineCommand({
           templates: data,
         }
       } catch (error) {
-        consola.error((error as Error).message)
+        consola.error(getErrorMessage(error))
         process.exit(1)
       }
     }
@@ -226,7 +233,7 @@ export default defineCommand({
         cwd: projectPath
       })
     } catch (error) {
-      consola.error((error as Error).message)
+      consola.error(getErrorMessage(error))
       process.exit(1)
     }
 
