@@ -36,11 +36,11 @@
     "giget",
     "citty"
   ],
-  "homepage": "https://github.com/xjccc/c-copy",
+  "homepage": "https://github.com/xjccc-team/c-copy",
   "author": "xjccc <https://github.com/xjccc>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xjccc/c-copy.git"
+    "url": "https://github.com/xjccc-team/c-copy.git"
   },
   "license": "MIT",
   "dependencies": {
