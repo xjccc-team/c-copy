@@ -1,7 +1,7 @@
 {
   "name": "create-copy",
-  "version": "0.0.11",
-  "description": "cli for vue default config template",
+  "version": "1.0.0",
+  "description": "CLI for downloading preconfigured project templates from remote registries",
   "main": "./dist/index.mjs",
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -19,14 +19,25 @@
     "dist",
     "bin"
   ],
+  "engines": {
+    "node": ">=22.9.0"
+  },
   "scripts": {
     "build": "unbuild",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
     "giget": "jiti ./src/index.ts",
     "c-copy": "node ./bin/c-copy.mjs",
     "release": "pnpm build && changelogen --release && npm publish && git push --follow-tags"
   },
   "keywords": [
-    "c-copy"
+    "c-copy",
+    "cli",
+    "template",
+    "scaffold",
+    "giget",
+    "citty"
   ],
   "homepage": "https://github.com/xjccc/c-copy",
   "author": "xjccc <https://github.com/xjccc>",
@@ -36,18 +47,20 @@
   },
   "license": "MIT",
   "dependencies": {
-    "citty": "^0.1.6",
+    "citty": "^0.2.2",
     "consola": "^3.4.2",
-    "giget": "^2.0.0",
-    "ini": "^5.0.0",
+    "giget": "^3.2.0",
+    "ini": "^6.0.0",
     "pathe": "^2.0.3"
   },
   "devDependencies": {
     "@types/ini": "^4.1.1",
-    "@types/node": "^22.16.5",
+    "@types/node": "^25.6.0",
     "changelogen": "^0.6.2",
-    "jiti": "^2.4.2",
-    "typescript": "^5.8.3",
-    "unbuild": "^3.5.0"
+    "jiti": "^2.6.1",
+    "typescript": "^6.0.2",
+    "unbuild": "^3.6.1",
+    "vite": "^8.0.8",
+    "vitest": "^4.1.4"
   }
 }

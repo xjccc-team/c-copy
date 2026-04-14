@@ -1,5 +1,4 @@
 import { downloadTemplate } from 'giget'
-import { consola } from 'consola'
 
 const getTemplate = async (dirName: string) => {
   const { source, dir } = await downloadTemplate(
