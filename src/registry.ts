@@ -34,6 +34,7 @@ const PROVIDER_ALIASES: Record<string, TemplateRegistryProvider> = {
 
 const trimPath = (value: string) => value.replace(/^\/+|\/+$/g, '')
 const trimFile = (value: string) => value.replace(/^\/+/, '')
+const hasMeaningfulString = (value?: string) => Boolean(value?.trim())
 
 export const normalizeTemplateRegistryProvider = (
   input?: string,
@@ -58,16 +59,16 @@ export const hasTemplateRegistryOverride = (
   env: NodeJS.ProcessEnv = process.env,
 ) => {
   return Boolean(
-    args.registryUrl
-    || args.registryProvider
-    || args.registryRepo
-    || args.registryBranch
-    || args.registryFile
-    || env[REGISTRY_ENV_KEYS.url]
-    || env[REGISTRY_ENV_KEYS.provider]
-    || env[REGISTRY_ENV_KEYS.repo]
-    || env[REGISTRY_ENV_KEYS.branch]
-    || env[REGISTRY_ENV_KEYS.file],
+    hasMeaningfulString(args.registryUrl)
+    || hasMeaningfulString(args.registryProvider)
+    || hasMeaningfulString(args.registryRepo)
+    || hasMeaningfulString(args.registryBranch)
+    || hasMeaningfulString(args.registryFile)
+    || hasMeaningfulString(env[REGISTRY_ENV_KEYS.url])
+    || hasMeaningfulString(env[REGISTRY_ENV_KEYS.provider])
+    || hasMeaningfulString(env[REGISTRY_ENV_KEYS.repo])
+    || hasMeaningfulString(env[REGISTRY_ENV_KEYS.branch])
+    || hasMeaningfulString(env[REGISTRY_ENV_KEYS.file]),
   )
 }
 

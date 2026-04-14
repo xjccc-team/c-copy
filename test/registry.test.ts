@@ -77,4 +77,12 @@ describe('registry helpers', () => {
       C_COPY_REGISTRY_PROVIDER: 'gitlab',
     })).toBe(true)
   })
+
+  it('ignores whitespace-only registry overrides', () => {
+    expect(hasTemplateRegistryOverride({
+      registryProvider: '   ',
+    }, {
+      C_COPY_REGISTRY_REPO: '   ',
+    })).toBe(false)
+  })
 })

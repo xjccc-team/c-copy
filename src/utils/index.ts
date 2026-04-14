@@ -234,10 +234,18 @@ export const resolveTemplateDirFromUrl = (value: string) => {
     const index = segments.indexOf(marker)
 
     if (index > 0) {
-      const archiveDir = sanitizeTemplateDirName(segments[index - 1])
+      for (let segmentIndex = index - 1; segmentIndex >= 0; segmentIndex--) {
+        const segment = segments[segmentIndex]
 
-      if (archiveDir) {
-        return archiveDir
+        if (segment === '-') {
+          continue
+        }
+
+        const archiveDir = sanitizeTemplateDirName(segment)
+
+        if (archiveDir) {
+          return archiveDir
+        }
       }
     }
   }

@@ -130,6 +130,30 @@ describe('download command', () => {
     }))
   })
 
+  it('derives the repository directory name for gitlab archive URLs', async () => {
+    const home = await createTempHome()
+    const { download, utils } = await loadModules(home)
+
+    silenceConsola()
+    const getTemplateSpy = vi.spyOn(utils, 'getTemplate').mockResolvedValue({} as never)
+
+    await download.run!({
+      args: {
+        url: 'https://gitlab.com/acme/demo-template/-/archive/main/demo-template-main.tar.gz',
+        force: false,
+        offline: false,
+      }
+    } as never)
+
+    expect(getTemplateSpy).toHaveBeenCalledWith(expect.objectContaining({
+      dir: 'demo-template',
+      template: 'demo-template',
+      templateInfo: expect.objectContaining({
+        tar: 'https://gitlab.com/acme/demo-template/-/archive/main/demo-template-main.tar.gz',
+      }),
+    }))
+  })
+
   it('applies the requested log level before downloading', async () => {
     const home = await createTempHome()
     const { download, utils } = await loadModules(home)
