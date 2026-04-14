@@ -3,7 +3,16 @@ import { registryArgs, resolveLogLevel, sharedArgs } from './_shared'
 import { consola } from 'consola'
 import { resolve } from 'pathe'
 import { createTemplateCacheMeta, hasTemplateRegistryOverride, resolveTemplateRegistryConfig } from '../registry'
-import { COPYJSON, downloadTemplateInfo, getTemplate, isFile, readTemplateCache, writeDefaultTemplateInfo } from '../utils'
+import {
+  COPYJSON,
+  createTemplateInfoFromUrl,
+  downloadTemplateInfo,
+  getTemplate,
+  isFile,
+  readTemplateCache,
+  resolveTemplateDirFromUrl,
+  writeDefaultTemplateInfo,
+} from '../utils'
 import { TemplateRegistryArgs, TemplateOption } from '../types'
 
 // const files: TemplateProvider = async (input, { auth }) => {
@@ -37,6 +46,11 @@ export default defineCommand({
   args: {
     ...sharedArgs,
     ...registryArgs,
+    url: {
+      type: 'string',
+      alias: 'u',
+      description: 'Direct template URL to download, bypassing registry lookup',
+    },
     template: {
       type: 'string',
       alias: 't',
@@ -75,6 +89,7 @@ export default defineCommand({
     const invocationCwd = process.env.INIT_CWD || process.env.PWD || process.cwd()
     const projectPath = resolve(invocationCwd, args.cwd || '.')
     let template = args.template
+    const directUrl = args.url?.trim()
     const registryInput: TemplateRegistryArgs = {
       registryUrl: args.registryUrl,
       registryProvider: args.registryProvider,
@@ -91,6 +106,49 @@ export default defineCommand({
     if (force && offline) {
       consola.error('--force and --offline cannot be used together')
       process.exit(1)
+    }
+
+    const hasExplicitRegistryArgs = Boolean(
+      args.registryUrl
+      || args.registryProvider
+      || args.registryRepo
+      || args.registryBranch
+      || args.registryFile,
+    )
+
+    if (directUrl) {
+      if (template) {
+        consola.error('--template cannot be used together with --url')
+        process.exit(1)
+      }
+
+      if (hasExplicitRegistryArgs) {
+        consola.error('registry options cannot be used together with --url')
+        process.exit(1)
+      }
+
+      try {
+        const dir = args.name || resolveTemplateDirFromUrl(directUrl)
+        const templateInfo = createTemplateInfoFromUrl(directUrl, dir)
+
+        consola.start('start downloading ...')
+
+        await getTemplate({
+          cwd: projectPath,
+          dir,
+          force,
+          offline,
+          template: dir,
+          templateInfo,
+        })
+
+        consola.success('create project successful!!')
+        consola.box(`cd ${dir} && pnpm install`)
+        return
+      } catch (error) {
+        consola.error((error as Error).message)
+        process.exit(1)
+      }
     }
 
     consola.start('get templates ...')

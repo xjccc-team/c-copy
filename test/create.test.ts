@@ -121,6 +121,77 @@ describe('create command', () => {
     )
   })
 
+  it('downloads directly from --url without requiring registry cache', async () => {
+    const home = await createTempHome()
+    const invocationCwd = await createTempHome()
+    const { create, utils } = await loadModules(home)
+
+    silenceConsola()
+    vi.stubEnv('INIT_CWD', invocationCwd)
+
+    const getTemplateSpy = vi.spyOn(utils, 'getTemplate').mockResolvedValue({} as never)
+    const downloadTemplateInfoSpy = vi.spyOn(utils, 'downloadTemplateInfo')
+
+    await create.run!({
+      args: {
+        cwd: './projects',
+        url: 'https://github.com/acme/demo-template.git',
+        force: false,
+        offline: false,
+      }
+    } as never)
+
+    expect(downloadTemplateInfoSpy).not.toHaveBeenCalled()
+    expect(getTemplateSpy).toHaveBeenCalledWith(expect.objectContaining({
+      cwd: resolve(invocationCwd, './projects'),
+      dir: 'demo-template',
+      template: 'demo-template',
+      templateInfo: expect.objectContaining({
+        url: 'https://github.com/acme/demo-template.git',
+      }),
+    }))
+  })
+
+  it('rejects mixing --url with template or registry arguments', async () => {
+    const home = await createTempHome()
+    const { create, utils } = await loadModules(home)
+
+    silenceConsola()
+    const getTemplateSpy = vi.spyOn(utils, 'getTemplate').mockResolvedValue({} as never)
+    const exitSpy = mockProcessExit()
+
+    await expect(create.run!({
+      args: {
+        url: 'https://github.com/acme/demo-template.git',
+        template: 'demo',
+        force: false,
+        offline: false,
+      }
+    } as never)).rejects.toThrow('process.exit')
+
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(getTemplateSpy).not.toHaveBeenCalled()
+    expect(consola.error).toHaveBeenCalledWith('--template cannot be used together with --url')
+
+    vi.restoreAllMocks()
+    silenceConsola()
+    const secondExitSpy = mockProcessExit()
+    const secondGetTemplateSpy = vi.spyOn(utils, 'getTemplate').mockResolvedValue({} as never)
+
+    await expect(create.run!({
+      args: {
+        url: 'https://github.com/acme/demo-template.git',
+        registryProvider: 'gitlab',
+        force: false,
+        offline: false,
+      }
+    } as never)).rejects.toThrow('process.exit')
+
+    expect(secondExitSpy).toHaveBeenCalledWith(1)
+    expect(secondGetTemplateSpy).not.toHaveBeenCalled()
+    expect(consola.error).toHaveBeenCalledWith('registry options cannot be used together with --url')
+  })
+
   it('refreshes cache and uses new template info when registry changes', async () => {
     const home = await createTempHome()
     const { create, registry, utils } = await loadModules(home)

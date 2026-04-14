@@ -69,6 +69,8 @@ interface TemplateOptions extends DownloadTemplateOptions {
   templateInfo?: TemplateOption
 }
 
+const ARCHIVE_URL_RE = /\.(tar\.gz|tgz|zip)(?:$|[?#])/i
+
 const TEMPLATE_OPTION_FIELDS = ['name', 'label', 'value', 'hint', 'url', 'tar', 'source', 'defaultDir'] as const
 
 const readMeaningfulString = (value: unknown) => {
@@ -178,6 +180,74 @@ const normalizeTemplateGitSource = (value?: string) => {
   }
 
   return undefined
+}
+
+export const normalizeDownloadUrl = (value: string) => {
+  try {
+    const url = new URL(value)
+
+    if (!['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('download url must use http or https')
+    }
+
+    return url.toString()
+  } catch (error) {
+    if (error instanceof Error && error.message === 'download url must use http or https') {
+      throw error
+    }
+
+    throw new Error(`invalid download url: ${value}`)
+  }
+}
+
+const sanitizeTemplateDirName = (value?: string) => {
+  const normalized = readMeaningfulString(value)
+
+  if (!normalized) {
+    return undefined
+  }
+
+  return normalized
+    .replace(/\.(tar\.gz|tgz|zip)$/i, '')
+    .replace(/\.git$/i, '')
+}
+
+export const resolveTemplateDirFromUrl = (value: string) => {
+  const normalizedUrl = normalizeDownloadUrl(value)
+  const { pathname } = new URL(normalizedUrl)
+  const segments = pathname.split('/').filter(Boolean)
+  const archiveMarkers = ['archive', 'repository']
+
+  for (const marker of archiveMarkers) {
+    const index = segments.indexOf(marker)
+
+    if (index > 0) {
+      const archiveDir = sanitizeTemplateDirName(segments[index - 1])
+
+      if (archiveDir) {
+        return archiveDir
+      }
+    }
+  }
+
+  return sanitizeTemplateDirName(segments.at(-1)) || 'template'
+}
+
+export const createTemplateInfoFromUrl = (value: string, templateName: string): TemplateOption => {
+  const normalizedUrl = normalizeDownloadUrl(value)
+  const templateInfo: TemplateOption = {
+    name: templateName,
+    label: templateName,
+    value: templateName,
+  }
+
+  if (ARCHIVE_URL_RE.test(normalizedUrl)) {
+    templateInfo.tar = normalizedUrl
+    return templateInfo
+  }
+
+  templateInfo.url = normalizedUrl
+  return templateInfo
 }
 
 const resolveTemplateSource = (templateInfo: TemplateOption, templateName: string) => {

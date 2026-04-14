@@ -7,9 +7,11 @@ c-copy 是一个基于 citty 和 giget 的命令行工具，用来从远程模�
 - 支持从 GitHub、GitLab、Gitee 或直接 URL 加载模板注册表
 - 首次使用自动拉取模板注册表并缓存到 ~/.ccopyrc
 - 支持交互式模板选择，也支持命令行直接指定模板
+- 支持在 create 命令中通过 URL 直接下载模板
+- 支持通过 download 命令直接从 URL 下载模板到指定目录
 - 支持离线模式，复用 giget 的本地缓存
 - 切换注册表来源时会自动刷新缓存，避免误用旧模板
-- 提供 show、update、clean 命令管理模板缓存
+- 提供 download、show、update、clean 命令管理模板缓存和直连下载
 - 同时提供 c-copy 和 create-copy 两个命令名
 
 ## 环境要求
@@ -49,6 +51,12 @@ c-copy create -t vue3-template my-app
 # 在指定目录下创建项目
 c-copy create -t nuxt3-template --cwd ../workspace my-app
 
+# 在 create 中直接从 URL 下载模板
+c-copy create --url https://github.com/your-org/template.git my-app
+
+# 直接从 URL 下载模板到指定目录
+c-copy download --url https://github.com/your-org/template.git my-app
+
 # 通过 pnpm 从子目录调用时，默认仍创建到命令发起目录
 pnpm c-copy create -t vue3-template my-app
 ```
@@ -74,6 +82,7 @@ c-copy create [options] [name]
 | 参数 | 说明 |
 | --- | --- |
 | name | 目标目录名，不传时默认使用模板名 |
+| -u, --url <url> | 直接下载模板 URL，传入后会跳过注册表查找 |
 | -t, --template <name> | 指定模板名；不传时进入交互选择 |
 | -f, --force | 创建前刷新模板注册表 |
 | -o, --offline | 仅使用本地缓存，不发起网络请求 |
@@ -88,12 +97,42 @@ c-copy create [options] [name]
 说明：
 
 - --force 和 --offline 不能同时使用
+- --url 与 --template 不能同时使用
+- --url 与任何 --registry* 参数不能同时使用
+- 传入 --url 后，create 会跳过注册表缓存逻辑，直接下载目标 URL 内容
+- 传入以 .tar.gz、.tgz、.zip 结尾的 URL 时，会按归档包直接下载
 - 使用 --offline 时，本机必须已经存在 ~/.ccopyrc 和 giget 模板缓存
 - 使用 --offline 时不能切换到另一个尚未缓存的注册表来源
 - 目标目录已存在时，CLI 会提示是否继续，并在确认后清理该目录
 - 如果当前注册表来源与缓存记录不一致，create 会自动刷新缓存后再创建项目
 - create 的默认基准目录是命令发起目录；通过 pnpm c-copy create 调用时会优先使用 INIT_CWD，其次使用 PWD，最后才回退到进程当前目录
-- 未传入 name 时，会依次使用模板的 defaultDir 和模板 value 作为目标目录名
+- 未传入 name 时，会依次使用 --url 推导目录名、模板的 defaultDir 和模板 value 作为目标目录名
+
+### download
+
+从指定 URL 直接下载模板内容。
+
+```bash
+c-copy download --url <url> [options] [name]
+```
+
+参数说明：
+
+| 参数 | 说明 |
+| --- | --- |
+| name | 目标目录名，不传时根据 URL 自动推导 |
+| -u, --url <url> | 必填，直接下载的模板 URL |
+| -f, --force | 下载前刷新模板内容 |
+| -o, --offline | 仅使用 giget 本地缓存 |
+| --cwd <dir> | 指定项目生成目录；相对路径基于命令发起目录解析 |
+| --logLevel <level> | 指定日志级别，支持 silent、fatal、error、warn、log、info、debug、trace、verbose 或数字级别 |
+
+说明：
+
+- --force 和 --offline 不能同时使用
+- 传入仓库 URL 时，会按 git 仓库形式下载
+- 传入以 .tar.gz、.tgz、.zip 结尾的 URL 时，会按归档包直接下载
+- 未传入 name 时，会优先从仓库名或归档所在仓库名推导目标目录
 
 ### show
 
@@ -144,6 +183,18 @@ c-copy create -t vue3-template demo-gitee --registryProvider gitee --registryRep
 
 # 使用直接 URL 作为注册表来源
 c-copy update --registryUrl https://example.com/templates.json
+
+# 在 create 中直接下载 Git 仓库模板
+c-copy create --url https://github.com/your-org/template.git my-app
+
+# 在 create 中直接下载归档模板
+c-copy create --url https://github.com/your-org/template/archive/refs/heads/main.tar.gz
+
+# 直接下载 Git 仓库模板
+c-copy download --url https://github.com/your-org/template.git my-app
+
+# 直接下载归档模板
+c-copy download --url https://github.com/your-org/template/archive/refs/heads/main.tar.gz
 
 # 查看当前缓存的模板列表
 c-copy show
