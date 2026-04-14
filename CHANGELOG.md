@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v1.0.0
+
+[compare changes](https://github.com/xjccc/c-copy/compare/v0.0.11...v1.0.0)
+
 ## v0.0.11
 
 
