@@ -228,7 +228,7 @@ export const resolveTemplateDirFromUrl = (value: string) => {
   const normalizedUrl = normalizeDownloadUrl(value)
   const { pathname } = new URL(normalizedUrl)
   const segments = pathname.split('/').filter(Boolean)
-  const archiveMarkers = ['archive', 'repository']
+  const archiveMarkers = ['repository', 'archive']
 
   for (const marker of archiveMarkers) {
     const index = segments.indexOf(marker)
