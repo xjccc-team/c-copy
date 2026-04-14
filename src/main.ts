@@ -1,6 +1,6 @@
 import { defineCommand } from 'citty'
 import { commands } from './commands'
-import pkg from '../package.json' assert { type: 'json' }
+import pkg from '../package.json' with { type: 'json' }
 
 // import { checkForUpdates } from './utils/update'
 

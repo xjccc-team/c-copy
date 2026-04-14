@@ -1,8 +1,7 @@
 import { defineCommand } from 'citty'
 import consola from 'consola'
-import { readFile } from 'node:fs/promises'
-import { COPYJSON, isExist } from '../utils'
-import ini from 'ini'
+import { getErrorMessage } from './_shared'
+import { COPYJSON, isFile, readTemplateCache } from '../utils'
 
 export default defineCommand({
   meta: {
@@ -10,11 +9,16 @@ export default defineCommand({
     description: 'show .ccopyrc config'
   },
   async run () {
-    if (await isExist(COPYJSON)) {
-      const json = await readFile(COPYJSON, { encoding: 'utf8' })
-      consola.info(JSON.stringify(ini.parse(json), null, 2))
+    if (await isFile(COPYJSON)) {
+      try {
+        const data = await readTemplateCache()
+        consola.info(JSON.stringify(data, null, 2))
+      } catch (error) {
+        consola.error(getErrorMessage(error))
+        process.exit(1)
+      }
     } else {
-      consola.error("can't find .ccopyrc")
+      consola.error('.ccopyrc was not found or is not a file')
       process.exit(1)
     }
   }
