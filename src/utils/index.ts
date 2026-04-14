@@ -29,6 +29,15 @@ export const isExist = async (path: string) => {
   }
 }
 
+export const isFile = async (path: string) => {
+  try {
+    const stats = await stat(path)
+    return stats.isFile()
+  } catch (error) {
+    return false
+  }
+}
+
 export const HOME =
   process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'] || '/'
   

@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { LogLevels, consola } from 'consola'
@@ -92,6 +92,32 @@ describe('create command', () => {
     expect(getTemplateSpy).not.toHaveBeenCalled()
     expect(consola.error).toHaveBeenCalledWith(
       'offline mode cannot use cache from another registry, run `c-copy update` first',
+    )
+  })
+
+  it('treats a .ccopyrc directory as missing cache instead of reading it as a file', async () => {
+    const home = await createTempHome()
+    const { create, utils } = await loadModules(home)
+
+    silenceConsola()
+    await mkdir(utils.COPYJSON)
+
+    const readTemplateCacheSpy = vi.spyOn(utils, 'readTemplateCache')
+    const exitSpy = mockProcessExit()
+
+    await expect(create.run!({
+      args: {
+        cwd: home,
+        template: 'demo',
+        force: false,
+        offline: true,
+      }
+    } as never)).rejects.toThrow('process.exit')
+
+    expect(exitSpy).toHaveBeenCalledWith(1)
+    expect(readTemplateCacheSpy).not.toHaveBeenCalled()
+    expect(consola.error).toHaveBeenCalledWith(
+      'offline mode requires cached template info, run `c-copy update` first',
     )
   })
 

@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -42,6 +42,21 @@ afterEach(async () => {
 })
 
 describe('utils', () => {
+  it('distinguishes regular files from directories', async () => {
+    const home = await createTempHome()
+    const utils = await loadUtils(home)
+
+    await mkdir(utils.COPYJSON)
+
+    expect(await utils.isExist(utils.COPYJSON)).toBe(true)
+    expect(await utils.isFile(utils.COPYJSON)).toBe(false)
+
+    await rm(utils.COPYJSON, { recursive: true, force: true })
+    await writeFile(utils.COPYJSON, '')
+
+    expect(await utils.isFile(utils.COPYJSON)).toBe(true)
+  })
+
   it('persists template cache metadata separately from templates', async () => {
     const home = await createTempHome()
     const utils = await loadUtils(home)

@@ -3,7 +3,7 @@ import { registryArgs, resolveLogLevel, sharedArgs } from './_shared'
 import { consola } from 'consola'
 import { resolve } from 'pathe'
 import { createTemplateCacheMeta, hasTemplateRegistryOverride, resolveTemplateRegistryConfig } from '../registry'
-import { COPYJSON, downloadTemplateInfo, getTemplate, isExist, readTemplateCache, writeDefaultTemplateInfo } from '../utils'
+import { COPYJSON, downloadTemplateInfo, getTemplate, isFile, readTemplateCache, writeDefaultTemplateInfo } from '../utils'
 import { TemplateRegistryArgs, TemplateOption } from '../types'
 
 // const files: TemplateProvider = async (input, { auth }) => {
@@ -75,15 +75,15 @@ export default defineCommand({
     const invocationCwd = process.env.INIT_CWD || process.env.PWD || process.cwd()
     const projectPath = resolve(invocationCwd, args.cwd || '.')
     let template = args.template
-    const registryArgs: TemplateRegistryArgs = {
+    const registryInput: TemplateRegistryArgs = {
       registryUrl: args.registryUrl,
       registryProvider: args.registryProvider,
       registryRepo: args.registryRepo,
       registryBranch: args.registryBranch,
       registryFile: args.registryFile,
     }
-    const registryConfig = resolveTemplateRegistryConfig(registryArgs)
-    const hasRegistryOverride = hasTemplateRegistryOverride(registryArgs)
+    const registryConfig = resolveTemplateRegistryConfig(registryInput)
+    const hasRegistryOverride = hasTemplateRegistryOverride(registryInput)
 
     const force = args.force
     const offline = args.offline
@@ -95,7 +95,7 @@ export default defineCommand({
 
     consola.start('get templates ...')
 
-    const hasJsonFile = await isExist(COPYJSON)
+    const hasJsonFile = await isFile(COPYJSON)
     let cache = hasJsonFile
       ? await readTemplateCache()
       : undefined

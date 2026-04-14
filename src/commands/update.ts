@@ -14,14 +14,14 @@ export default defineCommand({
     ...registryArgs,
   },
   async run ({ args }) {
-    const registryArgs: TemplateRegistryArgs = {
+    const registryInput: TemplateRegistryArgs = {
       registryUrl: args.registryUrl,
       registryProvider: args.registryProvider,
       registryRepo: args.registryRepo,
       registryBranch: args.registryBranch,
       registryFile: args.registryFile,
     }
-    const registryConfig = resolveTemplateRegistryConfig(registryArgs)
+    const registryConfig = resolveTemplateRegistryConfig(registryInput)
 
     consola.start('updating ...')
     const data = await downloadTemplateInfo(registryConfig)

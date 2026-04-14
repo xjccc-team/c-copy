@@ -1,6 +1,6 @@
 import { defineCommand } from 'citty'
 import consola from 'consola'
-import { COPYJSON, isExist, readTemplateCache } from '../utils'
+import { COPYJSON, isFile, readTemplateCache } from '../utils'
 
 export default defineCommand({
   meta: {
@@ -8,7 +8,7 @@ export default defineCommand({
     description: 'show .ccopyrc config'
   },
   async run () {
-    if (await isExist(COPYJSON)) {
+    if (await isFile(COPYJSON)) {
       const data = await readTemplateCache()
       consola.info(JSON.stringify(data, null, 2))
     } else {
